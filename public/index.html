@@ -15,6 +15,7 @@
         <div class="inline" id="file">
             File
             <input type="file" name="pdbfile" id="input" />
+            <button id="new">new</button>
         </div>
         <div class="inline" id="id">
         </div>
@@ -31,10 +32,6 @@
                 proteins_ribbonCartoonize
             </button>
 
-        </div>
-        <div class="inline">
-            Anotations
-            <button>Add</button>
         </div>
     </div>
     <div class="main">
@@ -53,9 +50,15 @@
                 var text;
                 var crn1;
                 var Sequence;
+                var inputfile= document.getElementById('input')
+                var newElement =document.getElementById('new');
+                newElement.addEventListener('click',function()
+                {
+                    location.replace('/')
+                })
                 if (id == null) {
                     let itemData = {};
-                    document.getElementById('input').addEventListener('change', function () {
+                       inputfile.addEventListener('change', function () {
                         let fr = new FileReader();
                         fr.onload = async function () {
                             console.log(fr.result)
@@ -69,7 +72,7 @@
                             console.log(itemData)
                             createItem(itemData).then((data) => {
                                 console.log(data._id)
-                                location.replace('https://pdb.kunalnayak.xyz/index.html' + '?id=' + data._id)
+                                location.replace('/index.html' + '?id=' + data._id)
                             });
                         }
                         fr.readAsText(this.files[0]);
@@ -96,8 +99,8 @@
 
                 }
                 else {
-
-
+                    inputfile.style.display='none';
+                    newElement.style.display ='inline';
                     async function getItemById(itemId) {
                         try {
                             const response = await fetch(`/items/${itemId}`);
@@ -167,11 +170,18 @@
             </script>
         </center>
 
-        <div class="inline">
+        <div class="inline m20">
             Sequence
             <div id="display">
 
             </div>
+            <div class="inline m20">
+                Anotations
+                <button>Add</button>
+            </div>
+            <div id="notes">
+            </div>
+
         </div>
     </div>
 </body>

@@ -6,6 +6,15 @@
     display: flex;
     justify-content: space-around;
 }
+#notes{
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+    height: 200px;
+    overflow: auto;
+}
 
 #display {
     max-width: 600px;
@@ -22,8 +31,17 @@
     justify-content: space-around;
 }
 
-#file {}
 
 #id {
     display: none;
+}
+
+#new 
+{
+    display: none;
+}
+
+.m20{
+    margin-top: 20px;
+
 }
