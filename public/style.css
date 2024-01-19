@@ -7,6 +7,7 @@
     justify-content: space-around;
 }
 #notes{
+    margin-top:10px !important ;
     max-width: 600px;
     margin: 0 auto;
     padding: 20px;
@@ -24,6 +25,7 @@
     box-sizing: border-box;
     height: 200px;
     overflow: auto;
+    margin-top: 10px !important;
 }
 
 .main {
@@ -41,7 +43,26 @@
     display: none;
 }
 
-.m20{
-    margin-top: 20px;
+.m20 {
+    margin-top: 30px !important;
+}
 
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+th, td {
+    border: 1px solid #000000;
+    text-align: left;
+    padding: 8px;
+}
+
+tr {
+    display: flex;
+}
+
+th, td {
+    flex: 1;
 }
