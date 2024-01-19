@@ -1,0 +1,29 @@
+.inline {
+    display: inline;
+}
+
+#header {
+    display: flex;
+    justify-content: space-around;
+}
+
+#display {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+    height: 200px;
+    overflow: auto;
+}
+
+.main {
+    display: flex;
+    justify-content: space-around;
+}
+
+#file {}
+
+#id {
+    display: none;
+}

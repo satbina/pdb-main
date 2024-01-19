@@ -1,0 +1,179 @@
+<html>
+
+<head>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <link rel="stylesheet" href="./ChemDoodleWeb.css" type="text/css">
+    <script type="text/javascript" src="./ChemDoodleWeb.js"></script>
+    <title>3D ChemDoodle Web Component using WebGL : Interactive Cartoon Ribbon Model of 1CRN</title>
+    <link rel="stylesheet" href="./style.css">
+
+</head>
+
+<body>
+
+    <div id="header">
+        <div class="inline" id="file">
+            File
+            <input type="file" name="pdbfile" id="input" />
+        </div>
+        <div class="inline" id="id">
+        </div>
+
+        <div class="inline">
+            Options
+            <button id="btn1">
+                atoms_display
+            </button>
+            <button id="btn2">
+                bonds_display
+            </button>
+            <button id="btn3">
+                proteins_ribbonCartoonize
+            </button>
+
+        </div>
+        <div class="inline">
+            Anotations
+            <button>Add</button>
+        </div>
+    </div>
+    <div class="main">
+        <center class="inline">
+            <br>
+            <script>
+                const urlParams = new URLSearchParams(window.location.search);
+                const id = urlParams.get('id');
+                var ribbonTransformer = new ChemDoodle.TransformCanvas3D('ribbonTransformer', 500, 500);
+                ribbonTransformer.styles.set3DRepresentation('Stick');
+                ribbonTransformer.styles.atoms_display = true;
+                ribbonTransformer.styles.bonds_display = true;
+                ribbonTransformer.styles.proteins_ribbonCartoonize = true;
+                ribbonTransformer.styles.backgroundColor = '#000000';
+
+                var text;
+                var crn1;
+                var Sequence;
+                if (id == null) {
+                    let itemData = {};
+                    document.getElementById('input').addEventListener('change', function () {
+                        let fr = new FileReader();
+                        fr.onload = async function () {
+                            console.log(fr.result)
+                            text = fr.result
+                            crn1 = ChemDoodle.readPDB(text);
+                            ribbonTransformer.loadMolecule(crn1);
+                            Sequence = parsePDB(text)
+                            document.getElementById('display').innerText = Sequence;
+                            itemData['pdb_text'] = text;
+                            itemData.pdb_sequence = Sequence;
+                            console.log(itemData)
+                            createItem(itemData).then((data) => {
+                                console.log(data._id)
+                                location.replace('https://pdb.kunalnayak.xyz/index.html' + '?id=' + data._id)
+                            });
+                        }
+                        fr.readAsText(this.files[0]);
+                    });
+
+
+                    async function createItem(itemData) {
+                        try {
+                            const response = await fetch('/items', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                },
+                                body: JSON.stringify(itemData),
+                            });
+
+                            const data = await response.json();
+                            return data;
+                        } catch (error) {
+                            console.error('Error creating item:', error);
+                            throw error;
+                        }
+                    }
+
+                }
+                else {
+
+
+                    async function getItemById(itemId) {
+                        try {
+                            const response = await fetch(`/items/${itemId}`);
+                            const data = await response.json();
+                            return data;
+                        } catch (error) {
+                            console.error(`Error fetching item with ID ${itemId}:`, error);
+                            throw error;
+                        }
+                    }
+                    getItemById(id).then(data => {
+                        console.log(data)
+                        text = data.pdb_text
+                        Sequence = data.pdb_sequence;
+                        crn1 = ChemDoodle.readPDB(data.pdb_text);
+                        ribbonTransformer.loadMolecule(crn1);
+                        Sequence = data.pdb_sequence;
+                        ribbonTransformer.loadMolecule(crn1);
+                        document.getElementById('display').innerText = Sequence;
+
+                    });
+
+
+                }
+                document.getElementById('btn1').addEventListener('click', function () {
+                    console.log("btn1");
+                    toggle1();
+                    crn1 = ChemDoodle.readPDB(text);
+                    ribbonTransformer.loadMolecule(crn1);
+                })
+
+                document.getElementById('btn2').addEventListener('click', function () {
+                    console.log("btn2");
+                    toggle2();
+                    crn1 = ChemDoodle.readPDB(text);
+                    ribbonTransformer.loadMolecule(crn1);
+                })
+                document.getElementById('btn3').addEventListener('click', function () {
+                    console.log("btn3");
+                    toggle3();
+                    crn1 = ChemDoodle.readPDB(text);
+                    ribbonTransformer.loadMolecule(crn1);
+                })
+                function toggle1() {
+                    ribbonTransformer.styles.atoms_display = !ribbonTransformer.styles.atoms_display
+                }
+                function toggle2() {
+                    ribbonTransformer.styles.bonds_display = !ribbonTransformer.styles.bonds_display
+                }
+                function toggle3() {
+                    ribbonTransformer.styles.proteins_ribbonCartoonize = !ribbonTransformer.styles.proteins_ribbonCartoonize
+                }
+
+
+                function parsePDB(pdbText) {
+                    const lines = pdbText.split('\n');
+                    let proteinSequence = "";
+                    lines.forEach(line => {
+                        if (line.startsWith("ATOM") || line.startsWith("HETATM")) {
+                            const aminoAcidCode = line.substr(17, 3).trim() + " ";
+                            proteinSequence += aminoAcidCode;
+                        }
+                    });
+
+                    return proteinSequence;
+                }
+            </script>
+        </center>
+
+        <div class="inline">
+            Sequence
+            <div id="display">
+
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
